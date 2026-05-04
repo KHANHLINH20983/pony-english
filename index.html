@@ -33,10 +33,12 @@
     margin: 0 auto;
   }
 
+  /* HEADER */
   .header {
     text-align: center;
     margin-bottom: 20px;
     padding-top: 10px;
+    position: relative;
   }
   .header h1 {
     font-family: 'Baloo 2', cursive;
@@ -48,15 +50,89 @@
   }
   .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
 
+  /* API KEY BUTTON - luôn hiện góc phải */
+  .api-key-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: var(--card2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 6px 10px;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s;
+  }
+  .api-key-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .modal h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--primary);
+  }
+  .modal p { color: var(--muted); font-size: 0.8rem; margin-bottom: 14px; line-height: 1.6; }
+  .modal input {
+    width: 100%;
+    background: var(--card2);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 12px;
+    outline: none;
+    margin-bottom: 10px;
+  }
+  .modal input:focus { border-color: var(--primary); }
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btns button {
+    flex: 1; padding: 10px; border: none; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    cursor: pointer; font-size: 0.88rem;
+  }
+  .btn-save { background: var(--primary); color: white; }
+  .btn-cancel { background: var(--card2); color: var(--muted); }
+  .modal-link { font-size: 0.75rem; color: var(--secondary); text-decoration: none; }
+  .modal-link:hover { text-decoration: underline; }
+
+  /* API SETUP (lần đầu) */
   .api-setup {
     background: var(--card);
     border: 2px solid rgba(255,107,53,0.3);
     border-radius: 16px;
-    padding: 16px;
+    padding: 20px;
     margin-bottom: 16px;
+    text-align: center;
   }
-  .api-setup .card-title { color: var(--primary); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; }
-  .api-setup p { color: var(--muted); font-size: 0.78rem; margin-bottom: 10px; line-height: 1.5; }
+  .api-setup .icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .api-setup h3 { font-family: 'Baloo 2', cursive; font-size: 1.2rem; color: var(--primary); margin-bottom: 8px; }
+  .api-setup p { color: var(--muted); font-size: 0.8rem; margin-bottom: 14px; line-height: 1.6; }
   .api-setup input {
     width: 100%;
     background: var(--card2);
@@ -64,13 +140,14 @@
     border-radius: 10px;
     color: var(--text);
     font-family: 'Nunito', sans-serif;
-    font-size: 0.85rem;
-    padding: 8px 12px;
+    font-size: 0.88rem;
+    padding: 10px 12px;
     outline: none;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   .api-setup input:focus { border-color: var(--primary); }
 
+  /* TABS */
   .tabs {
     display: flex;
     gap: 6px;
@@ -81,20 +158,12 @@
     overflow-x: auto;
   }
   .tab {
-    flex: 1;
-    min-width: 65px;
-    padding: 8px 6px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 0.72rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-    text-align: center;
+    flex: 1; min-width: 60px; padding: 8px 6px;
+    border: none; border-radius: 10px;
+    background: transparent; color: var(--muted);
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 0.7rem; cursor: pointer; transition: all 0.2s;
+    white-space: nowrap; text-align: center;
   }
   .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(255,107,53,0.4); }
   .tab:hover:not(.active) { color: var(--text); background: var(--card2); }
@@ -104,64 +173,40 @@
   @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
   .card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 12px;
+    background: var(--card); border-radius: 16px;
+    padding: 16px; margin-bottom: 12px;
     border: 1px solid rgba(255,255,255,0.05);
   }
   .card-title {
-    font-weight: 800;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--secondary);
-    margin-bottom: 10px;
+    font-weight: 800; font-size: 0.78rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--secondary); margin-bottom: 10px;
   }
 
   textarea, input[type="text"] {
-    width: 100%;
-    background: var(--card2);
-    border: 2px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.88rem;
-    padding: 10px 12px;
-    resize: none;
-    outline: none;
-    transition: border-color 0.2s;
-    margin-bottom: 8px;
+    width: 100%; background: var(--card2);
+    border: 2px solid rgba(255,255,255,0.08); border-radius: 12px;
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem; padding: 10px 12px; resize: none;
+    outline: none; transition: border-color 0.2s; margin-bottom: 8px;
   }
   textarea:focus, input[type="text"]:focus { border-color: var(--primary); }
   textarea { height: 110px; }
 
   .btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 6px;
+    width: 100%; padding: 12px; border: none; border-radius: 12px;
+    font-family: 'Baloo 2', cursive; font-weight: 700;
+    font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 6px;
   }
   .btn-primary { background: linear-gradient(135deg, var(--primary), #FF8C55); color: white; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
   .btn-secondary { background: var(--secondary); color: var(--bg); }
-  .btn-secondary:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
   .upload-area {
-    border: 2px dashed rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 8px;
+    border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px;
+    padding: 20px; text-align: center; cursor: pointer;
+    transition: all 0.2s; margin-bottom: 8px;
   }
   .upload-area:hover { border-color: var(--primary); background: rgba(255,107,53,0.05); }
   .upload-area .icon { font-size: 2rem; margin-bottom: 8px; }
@@ -171,13 +216,8 @@
 
   .word-list { display: flex; flex-direction: column; gap: 8px; }
   .word-item {
-    background: var(--card2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
+    background: var(--card2); border-radius: 10px; padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
   }
   .word-en { font-weight: 800; color: var(--accent); font-size: 0.95rem; }
   .word-vi { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
@@ -186,26 +226,16 @@
 
   .flashcard-container { perspective: 1000px; margin-bottom: 16px; }
   .flashcard {
-    width: 100%;
-    height: 190px;
-    position: relative;
+    width: 100%; height: 190px; position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
   }
   .flashcard.flipped { transform: rotateY(180deg); }
   .flashcard-front, .flashcard-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden; border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 20px; text-align: center;
   }
   .flashcard-front { background: linear-gradient(135deg, #1A2634, #1E2D3D); border: 2px solid var(--primary); }
   .flashcard-back { background: linear-gradient(135deg, var(--primary), #FF8C55); transform: rotateY(180deg); }
@@ -221,7 +251,6 @@
     font-family: 'Nunito', sans-serif; font-weight: 700;
     cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
   }
-  .fc-nav button:hover { background: var(--card); }
   .fc-counter { text-align: center; color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
 
   .progress-bar { height: 6px; background: var(--card2); border-radius: 99px; margin-bottom: 14px; overflow: hidden; }
@@ -232,21 +261,15 @@
   .fib-vi { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
   .fib-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .fib-input {
-    background: var(--card) !important;
-    border: 2px solid rgba(255,255,255,0.1) !important;
-    border-radius: 8px !important;
-    padding: 6px 12px !important;
-    font-size: 0.88rem !important;
-    width: 140px !important;
-    height: auto !important;
-    margin: 0 !important;
-    display: inline-block !important;
+    background: var(--card) !important; border: 2px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important; padding: 6px 12px !important;
+    font-size: 0.88rem !important; width: 140px !important;
+    height: auto !important; margin: 0 !important; display: inline-block !important;
   }
   .fib-check {
     padding: 7px 14px; border: none; border-radius: 8px;
     background: var(--secondary); color: var(--bg);
-    font-weight: 700; cursor: pointer;
-    font-family: 'Nunito', sans-serif; font-size: 0.82rem;
+    font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 0.82rem;
   }
   .fib-result { margin-top: 7px; font-weight: 700; font-size: 0.82rem; }
   .correct { color: var(--success); }
@@ -292,6 +315,7 @@
     background: var(--card2); border-radius: 10px; padding: 10px 12px;
     margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
     display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid transparent;
   }
   .history-item:hover { border-color: var(--primary); background: rgba(255,107,53,0.08); }
   .history-date { font-weight: 800; font-size: 0.85rem; }
@@ -305,32 +329,37 @@
     font-family: 'Nunito', sans-serif; font-weight: 700;
     cursor: pointer; font-size: 0.9rem; margin-top: 10px; display: none;
   }
-
-  .info-box {
-    background: rgba(255,107,53,0.08);
-    border: 1px solid rgba(255,107,53,0.2);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 10px;
-    line-height: 1.6;
-  }
-  .info-box a { color: var(--primary); }
 </style>
 </head>
 <body>
+
+<!-- NÚT ĐỔI API KEY - luôn hiện góc phải -->
+<button class="api-key-btn" onclick="showApiModal()">🔑 API Key</button>
+
+<!-- MODAL ĐỔI API KEY -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal">
+    <h3>🔑 Cập nhật API Key</h3>
+    <p>Nhập Anthropic API Key của mẹ. Lấy key tại <a href="https://console.anthropic.com" target="_blank" class="modal-link">console.anthropic.com</a> → API Keys → Create Key.</p>
+    <input type="password" id="modalApiInput" placeholder="sk-ant-api03-..." />
+    <div class="modal-btns">
+      <button class="modal-btns btn-cancel" onclick="hideApiModal()">Huỷ</button>
+      <button class="modal-btns btn-save" onclick="saveApiFromModal()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
 
 <div class="header">
   <h1>🦄 Pony English</h1>
   <p>Trợ lý học Tiếng Anh thông minh</p>
 </div>
 
-<!-- API KEY SETUP -->
+<!-- API SETUP (lần đầu) -->
 <div class="api-setup" id="apiSetup">
-  <div class="card-title">🔑 Cài đặt API Key</div>
-  <p>Để dùng app offline, mẹ cần nhập Anthropic API Key. Lấy key tại <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">console.anthropic.com</a> → API Keys.</p>
-  <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+  <div class="icon">🔑</div>
+  <h3>Nhập API Key để bắt đầu</h3>
+  <p>Lấy key miễn phí tại <a href="https://console.anthropic.com" target="_blank" class="modal-link">console.anthropic.com</a> → API Keys → Create Key</p>
+  <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
   <button class="btn btn-primary" onclick="saveApiKey()">💾 Lưu & Bắt đầu</button>
 </div>
 
@@ -352,18 +381,15 @@
     <input type="text" id="sessionDate" placeholder="Ngày học (vd: Thứ 2, 5/5/2026)">
     <input type="text" id="sessionTopic" placeholder="Chủ đề bài học (vd: Animals, Family...)">
   </div>
-
   <div class="card">
     <div class="card-title">📖 Nội dung bài học</div>
     <div class="mode-toggle">
       <button class="mode-btn active" id="modeText" onclick="setMode('text')">✍️ Gõ tay</button>
       <button class="mode-btn" id="modeImg" onclick="setMode('image')">📷 Chụp ảnh</button>
     </div>
-
     <div id="textMode">
-      <textarea id="lessonText" placeholder="Nhập nội dung bài học, từ vựng, ngữ pháp...&#10;Ví dụ:&#10;Vocabulary: happy (vui), sad (buồn)&#10;Grammar: I am + adjective&#10;Sentences: I am happy today."></textarea>
+      <textarea id="lessonText" placeholder="Nhập nội dung bài học, từ vựng, ngữ pháp..."></textarea>
     </div>
-
     <div id="imageMode" style="display:none">
       <div class="upload-area" onclick="document.getElementById('fileInput').click()">
         <div class="icon">📸</div>
@@ -372,10 +398,8 @@
       <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)">
       <img id="previewImg">
     </div>
-
     <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeLesson()">✨ Phân tích bài học</button>
   </div>
-
   <div id="loadingArea" style="display:none" class="loading">
     <div class="spinner"></div>
     <p>Claude đang phân tích bài học cho Pony...</p>
@@ -415,26 +439,22 @@
   <div class="card">
     <div class="card-title">📅 Lịch sử buổi học</div>
     <div id="history-list">
-      <div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào được lưu.</p></div>
+      <div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào.</p></div>
     </div>
   </div>
 </div>
 
-</div><!-- end mainApp -->
+</div>
 
 <script>
   let apiKey = '';
   let inputMode = 'text';
   let uploadedImageB64 = null;
   let lessonData = null;
-  let fcIndex = 0;
-  let fcFlipped = false;
-  let quizIndex = 0;
-  let quizScore = 0;
-  let quizAnswered = false;
+  let fcIndex = 0, fcFlipped = false;
+  let quizIndex = 0, quizScore = 0, quizAnswered = false;
   let sessions = [];
 
-  // Init
   window.onload = function() {
     const saved = localStorage.getItem('pony_api_key');
     if (saved) {
@@ -446,23 +466,48 @@
     if (savedSessions) sessions = JSON.parse(savedSessions);
     renderHistory();
 
-    // Set today's date
     const today = new Date();
     const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
     document.getElementById('sessionDate').value = `${days[today.getDay()]}, ${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
   };
 
+  // API KEY MANAGEMENT
   function saveApiKey() {
     const key = document.getElementById('apiKeyInput').value.trim();
-    if (!key.startsWith('sk-ant-')) {
-      alert('API Key không hợp lệ! Phải bắt đầu bằng sk-ant-');
-      return;
-    }
+    if (!key.startsWith('sk-ant-')) { alert('API Key không hợp lệ! Phải bắt đầu bằng sk-ant-'); return; }
     apiKey = key;
     localStorage.setItem('pony_api_key', key);
     document.getElementById('apiSetup').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
   }
+
+  function showApiModal() {
+    document.getElementById('modalApiInput').value = apiKey ? '••••••••••••' : '';
+    document.getElementById('apiModal').classList.add('show');
+  }
+
+  function hideApiModal() {
+    document.getElementById('apiModal').classList.remove('show');
+  }
+
+  function saveApiFromModal() {
+    const key = document.getElementById('modalApiInput').value.trim();
+    if (key === '••••••••••••') { hideApiModal(); return; }
+    if (!key.startsWith('sk-ant-')) { alert('API Key không hợp lệ! Phải bắt đầu bằng sk-ant-'); return; }
+    apiKey = key;
+    localStorage.setItem('pony_api_key', key);
+    hideApiModal();
+    if (document.getElementById('mainApp').style.display === 'none') {
+      document.getElementById('apiSetup').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+    }
+    alert('✅ Đã lưu API Key mới!');
+  }
+
+  // Đóng modal khi bấm ngoài
+  document.getElementById('apiModal').addEventListener('click', function(e) {
+    if (e.target === this) hideApiModal();
+  });
 
   function switchTab(tab) {
     const tabs = ['input','words','flashcard','fib','quiz','history'];
@@ -499,19 +544,14 @@
 
     if (inputMode === 'text' && !text.trim()) { alert('Mẹ nhập nội dung bài học vào nhé!'); return; }
     if (inputMode === 'image' && !uploadedImageB64) { alert('Mẹ chụp ảnh bài học vào nhé!'); return; }
+    if (!apiKey) { showApiModal(); return; }
 
     document.getElementById('loadingArea').style.display = 'block';
     document.getElementById('analyzeBtn').disabled = true;
 
     try {
       const systemPrompt = `Bạn là trợ lý giáo dục cho trẻ em 8 tuổi học tiếng Anh. Phân tích nội dung bài học và trả về JSON theo đúng format sau, không có text nào khác:
-{
-  "topic": "chủ đề bài học",
-  "grammar": "giải thích ngữ pháp ngắn gọn bằng tiếng Việt",
-  "words": [{"en":"từ tiếng Anh","vi":"nghĩa tiếng Việt","type":"n/v/adj","example":"câu ví dụ đơn giản"}],
-  "sentences": [{"text":"câu hoàn chỉnh tiếng Anh","blank_word":"từ cần điền","vi":"nghĩa tiếng Việt"}],
-  "quiz": [{"question":"câu hỏi","options":["A","B","C","D"],"correct":0}]
-}
+{"topic":"chủ đề","grammar":"ngữ pháp bằng tiếng Việt","words":[{"en":"từ","vi":"nghĩa","type":"n/v/adj","example":"câu ví dụ"}],"sentences":[{"text":"câu tiếng Anh","blank_word":"từ cần điền","vi":"nghĩa"}],"quiz":[{"question":"câu hỏi","options":["A","B","C","D"],"correct":0}]}
 Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Phù hợp trẻ 8 tuổi.`;
 
       let messages;
@@ -536,7 +576,13 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
       });
 
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) {
+        if (data.error.type === 'authentication_error') {
+          showApiModal();
+          throw new Error('API Key không hợp lệ! Vui lòng nhập lại.');
+        }
+        throw new Error(data.error.message);
+      }
 
       const raw = data.content[0].text.replace(/```json|```/g, '').trim();
       lessonData = JSON.parse(raw);
@@ -544,7 +590,6 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
       lessonData.topic = topic || lessonData.topic;
       lessonData.id = Date.now();
 
-      // Save to history
       sessions.unshift({ id: lessonData.id, date, topic: lessonData.topic, wordCount: lessonData.words.length, data: lessonData });
       if (sessions.length > 20) sessions.pop();
       localStorage.setItem('pony_sessions', JSON.stringify(sessions));
@@ -552,20 +597,14 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
       renderAll();
       switchTab('words');
     } catch(e) {
-      alert('Có lỗi: ' + e.message + '\n\nKiểm tra lại API Key nhé mẹ!');
+      alert(e.message);
     } finally {
       document.getElementById('loadingArea').style.display = 'none';
       document.getElementById('analyzeBtn').disabled = false;
     }
   }
 
-  function renderAll() {
-    renderWords();
-    renderFlashcard();
-    renderFIB();
-    renderQuiz();
-    renderHistory();
-  }
+  function renderAll() { renderWords(); renderFlashcard(); renderFIB(); renderQuiz(); renderHistory(); }
 
   function renderWords() {
     if (!lessonData) return;
@@ -575,35 +614,20 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
       <div class="stat-box"><div class="stat-num">${lessonData.sentences?.length||0}</div><div class="stat-label">Bài tập</div></div>
       <div class="stat-box"><div class="stat-num">${lessonData.quiz?.length||0}</div><div class="stat-label">Câu đố</div></div>
     </div>`;
-    if (lessonData.grammar) {
-      html += `<div class="card"><div class="card-title">📐 Ngữ pháp</div><p style="font-size:0.88rem;line-height:1.6;color:var(--secondary)">${lessonData.grammar}</p></div>`;
-    }
+    if (lessonData.grammar) html += `<div class="card"><div class="card-title">📐 Ngữ pháp</div><p style="font-size:0.88rem;line-height:1.6;color:var(--secondary)">${lessonData.grammar}</p></div>`;
     html += `<div class="card"><div class="card-title">📖 Từ vựng <span class="badge">${lessonData.date}</span></div><div class="word-list">`;
     w.forEach(word => {
-      html += `<div class="word-item">
-        <div style="flex:1">
-          <div class="word-en">${word.en}</div>
-          <div class="word-vi">${word.vi}</div>
-          <div class="word-ex">${word.example||''}</div>
-        </div>
-        <span class="word-type">${word.type||'n'}</span>
-      </div>`;
+      html += `<div class="word-item"><div style="flex:1"><div class="word-en">${word.en}</div><div class="word-vi">${word.vi}</div><div class="word-ex">${word.example||''}</div></div><span class="word-type">${word.type||'n'}</span></div>`;
     });
     html += '</div></div>';
     document.getElementById('words-content').innerHTML = html;
   }
 
-  function renderFlashcard() {
-    if (!lessonData) return;
-    fcIndex = 0; fcFlipped = false;
-    showFlashcard();
-  }
+  function renderFlashcard() { if (!lessonData) return; fcIndex=0; fcFlipped=false; showFlashcard(); }
 
   function showFlashcard() {
     if (!lessonData?.words?.length) return;
-    const w = lessonData.words;
-    const word = w[fcIndex];
-    const total = w.length;
+    const w = lessonData.words, word = w[fcIndex], total = w.length;
     const pct = ((fcIndex+1)/total*100).toFixed(0);
     document.getElementById('flashcard-content').innerHTML = `
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -629,10 +653,7 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
       <button class="btn btn-secondary" onclick="shuffleCards()" style="margin-top:4px">🔀 Xáo bài ngẫu nhiên</button>`;
   }
 
-  function flipCard() {
-    fcFlipped = !fcFlipped;
-    document.getElementById('theCard')?.classList.toggle('flipped', fcFlipped);
-  }
+  function flipCard() { fcFlipped=!fcFlipped; document.getElementById('theCard')?.classList.toggle('flipped', fcFlipped); }
   function fcNext() { if (!lessonData) return; fcIndex=(fcIndex+1)%lessonData.words.length; fcFlipped=false; showFlashcard(); }
   function fcPrev() { if (!lessonData) return; fcIndex=(fcIndex-1+lessonData.words.length)%lessonData.words.length; fcFlipped=false; showFlashcard(); }
   function shuffleCards() { if (!lessonData) return; lessonData.words.sort(()=>Math.random()-0.5); fcIndex=0; fcFlipped=false; showFlashcard(); }
@@ -657,30 +678,22 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
   }
 
   function checkFIB(i, answer) {
-    const input = document.getElementById('fib-'+i);
-    const result = document.getElementById('fib-result-'+i);
+    const input = document.getElementById('fib-'+i), result = document.getElementById('fib-result-'+i);
     const val = input.value.trim().toLowerCase();
     if (val === answer.toLowerCase()) {
-      result.className='fib-result correct'; result.textContent='✅ Đúng rồi! Pony giỏi lắm!';
-      input.style.borderColor='var(--success)';
+      result.className='fib-result correct'; result.textContent='✅ Đúng rồi! Pony giỏi lắm!'; input.style.borderColor='var(--success)';
     } else {
-      result.className='fib-result wrong'; result.textContent=`❌ Chưa đúng! Đáp án: "${answer}"`;
-      input.style.borderColor='var(--danger)';
+      result.className='fib-result wrong'; result.textContent=`❌ Chưa đúng! Đáp án: "${answer}"`; input.style.borderColor='var(--danger)';
     }
   }
 
-  function renderQuiz() {
-    if (!lessonData?.quiz?.length) return;
-    quizIndex=0; quizScore=0; quizAnswered=false;
-    showQuiz();
-  }
+  function renderQuiz() { if (!lessonData?.quiz?.length) return; quizIndex=0; quizScore=0; quizAnswered=false; showQuiz(); }
 
   function showQuiz() {
     if (!lessonData?.quiz) return;
     const quiz = lessonData.quiz;
     if (quizIndex >= quiz.length) {
-      const pct = Math.round(quizScore/quiz.length*100);
-      const emoji = pct>=80?'🏆':pct>=60?'⭐':'💪';
+      const pct = Math.round(quizScore/quiz.length*100), emoji = pct>=80?'🏆':pct>=60?'⭐':'💪';
       document.getElementById('quiz-content').innerHTML = `
         <div class="card" style="text-align:center;padding:30px">
           <div style="font-size:3rem;margin-bottom:12px">${emoji}</div>
@@ -691,8 +704,7 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
         </div>`;
       return;
     }
-    const q = quiz[quizIndex];
-    const pct = (quizIndex/quiz.length*100).toFixed(0);
+    const q = quiz[quizIndex], pct = (quizIndex/quiz.length*100).toFixed(0);
     let optHtml = q.options.map((opt,i) => `<button class="quiz-opt" id="qopt-${i}" onclick="answerQuiz(${i},${q.correct})">${opt}</button>`).join('');
     document.getElementById('quiz-content').innerHTML = `
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -714,15 +726,8 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
     quizAnswered = true;
     document.querySelectorAll('.quiz-opt').forEach(b => b.disabled=true);
     const fb = document.getElementById('quiz-feedback');
-    if (chosen===correct) {
-      quizScore++;
-      document.getElementById('qopt-'+chosen).classList.add('correct-opt');
-      fb.innerHTML='<span style="color:var(--success)">✅ Đúng rồi! Pony thông minh!</span>';
-    } else {
-      document.getElementById('qopt-'+chosen).classList.add('wrong-opt');
-      document.getElementById('qopt-'+correct).classList.add('correct-opt');
-      fb.innerHTML='<span style="color:var(--danger)">❌ Chưa đúng! Xem lại nhé!</span>';
-    }
+    if (chosen===correct) { quizScore++; document.getElementById('qopt-'+chosen).classList.add('correct-opt'); fb.innerHTML='<span style="color:var(--success)">✅ Đúng rồi! Pony thông minh!</span>'; }
+    else { document.getElementById('qopt-'+chosen).classList.add('wrong-opt'); document.getElementById('qopt-'+correct).classList.add('correct-opt'); fb.innerHTML='<span style="color:var(--danger)">❌ Chưa đúng! Xem lại nhé!</span>'; }
     const nb = document.getElementById('nextBtn');
     if (nb) nb.style.display='block';
   }
@@ -732,25 +737,15 @@ Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Ph
   function renderHistory() {
     const list = document.getElementById('history-list');
     if (!list) return;
-    if (!sessions.length) {
-      list.innerHTML='<div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào.</p></div>';
-      return;
-    }
+    if (!sessions.length) { list.innerHTML='<div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào.</p></div>'; return; }
     list.innerHTML = sessions.map((s,i) => `
       <div class="history-item" onclick="loadSession(${i})">
-        <div>
-          <div class="history-date">${s.date}</div>
-          <div class="history-topic">📚 ${s.topic}</div>
-        </div>
+        <div><div class="history-date">${s.date}</div><div class="history-topic">📚 ${s.topic}</div></div>
         <div class="history-count">${s.wordCount} từ</div>
       </div>`).join('');
   }
 
-  function loadSession(i) {
-    lessonData = sessions[i].data;
-    renderAll();
-    switchTab('words');
-  }
+  function loadSession(i) { lessonData = sessions[i].data; renderAll(); switchTab('words'); }
 </script>
 </body>
 </html>
