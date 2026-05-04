@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦄 Pony English App</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap');
+
+  :root {
+    --primary: #FF6B35;
+    --secondary: #4ECDC4;
+    --accent: #FFE66D;
+    --purple: #A855F7;
+    --bg: #0F1923;
+    --card: #1A2634;
+    --card2: #1E2D3D;
+    --text: #F0F4F8;
+    --muted: #8899AA;
+    --success: #4ADE80;
+    --danger: #F87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 10px;
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+  .api-setup {
+    background: var(--card);
+    border: 2px solid rgba(255,107,53,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .api-setup .card-title { color: var(--primary); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; }
+  .api-setup p { color: var(--muted); font-size: 0.78rem; margin-bottom: 10px; line-height: 1.5; }
+  .api-setup input {
+    width: 100%;
+    background: var(--card2);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  .api-setup input:focus { border-color: var(--primary); }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 16px;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    min-width: 65px;
+    padding: 8px 6px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(255,107,53,0.4); }
+  .tab:hover:not(.active) { color: var(--text); background: var(--card2); }
+
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .card-title {
+    font-weight: 800;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--secondary);
+    margin-bottom: 10px;
+  }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--card2);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 8px;
+  }
+  textarea:focus, input[type="text"]:focus { border-color: var(--primary); }
+  textarea { height: 110px; }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 6px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), #FF8C55); color: white; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+  .btn-secondary { background: var(--secondary); color: var(--bg); }
+  .btn-secondary:hover { transform: translateY(-2px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  .upload-area {
+    border: 2px dashed rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .upload-area:hover { border-color: var(--primary); background: rgba(255,107,53,0.05); }
+  .upload-area .icon { font-size: 2rem; margin-bottom: 8px; }
+  .upload-area p { color: var(--muted); font-size: 0.82rem; }
+  #fileInput { display: none; }
+  #previewImg { width: 100%; border-radius: 10px; margin-top: 8px; display: none; max-height: 200px; object-fit: contain; }
+
+  .word-list { display: flex; flex-direction: column; gap: 8px; }
+  .word-item {
+    background: var(--card2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .word-en { font-weight: 800; color: var(--accent); font-size: 0.95rem; }
+  .word-vi { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+  .word-ex { color: rgba(240,244,248,0.5); font-size: 0.75rem; margin-top: 3px; font-style: italic; }
+  .word-type { font-size: 0.68rem; background: rgba(168,85,247,0.2); color: var(--purple); padding: 2px 6px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+
+  .flashcard-container { perspective: 1000px; margin-bottom: 16px; }
+  .flashcard {
+    width: 100%;
+    height: 190px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+  }
+  .flashcard-front { background: linear-gradient(135deg, #1A2634, #1E2D3D); border: 2px solid var(--primary); }
+  .flashcard-back { background: linear-gradient(135deg, var(--primary), #FF8C55); transform: rotateY(180deg); }
+  .flashcard-word { font-family: 'Baloo 2', cursive; font-size: 2.2rem; font-weight: 800; }
+  .flashcard-hint { color: var(--muted); font-size: 0.75rem; margin-top: 8px; }
+  .flashcard-meaning { font-size: 1.4rem; font-weight: 800; color: white; }
+  .flashcard-example { font-size: 0.78rem; color: rgba(255,255,255,0.8); margin-top: 8px; font-style: italic; }
+
+  .fc-nav { display: flex; gap: 8px; margin-bottom: 10px; }
+  .fc-nav button {
+    flex: 1; padding: 10px; border: none; border-radius: 10px;
+    background: var(--card2); color: var(--text);
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .fc-nav button:hover { background: var(--card); }
+  .fc-counter { text-align: center; color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
+
+  .progress-bar { height: 6px; background: var(--card2); border-radius: 99px; margin-bottom: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.4s ease; }
+
+  .fib-question { background: var(--card2); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+  .fib-sentence { font-size: 0.95rem; font-weight: 700; line-height: 1.7; margin-bottom: 8px; }
+  .fib-vi { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .fib-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .fib-input {
+    background: var(--card) !important;
+    border: 2px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 0.88rem !important;
+    width: 140px !important;
+    height: auto !important;
+    margin: 0 !important;
+    display: inline-block !important;
+  }
+  .fib-check {
+    padding: 7px 14px; border: none; border-radius: 8px;
+    background: var(--secondary); color: var(--bg);
+    font-weight: 700; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-size: 0.82rem;
+  }
+  .fib-result { margin-top: 7px; font-weight: 700; font-size: 0.82rem; }
+  .correct { color: var(--success); }
+  .wrong { color: var(--danger); }
+
+  .quiz-question { font-size: 1.05rem; font-weight: 800; margin-bottom: 14px; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 11px 14px; border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 10px; background: var(--card2); color: var(--text);
+    font-family: 'Nunito', sans-serif; font-weight: 600;
+    cursor: pointer; text-align: left; font-size: 0.88rem; transition: all 0.2s;
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: rgba(255,107,53,0.08); }
+  .quiz-opt.correct-opt { border-color: var(--success); background: rgba(74,222,128,0.12); color: var(--success); }
+  .quiz-opt.wrong-opt { border-color: var(--danger); background: rgba(248,113,113,0.12); color: var(--danger); }
+  .quiz-opt:disabled { cursor: default; }
+
+  .stats-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .stat-box { flex: 1; background: var(--card2); border-radius: 12px; padding: 12px; text-align: center; }
+  .stat-num { font-family: 'Baloo 2', cursive; font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+  .stat-label { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; background: rgba(78,205,196,0.15); color: var(--secondary); margin-left: 6px; }
+
+  .loading { text-align: center; padding: 30px; color: var(--muted); }
+  .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,107,53,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state { text-align: center; padding: 30px; color: var(--muted); font-size: 0.85rem; }
+  .empty-state .big { font-size: 2.5rem; margin-bottom: 8px; }
+
+  .mode-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+  .mode-btn {
+    flex: 1; padding: 7px; border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 10px; background: transparent; color: var(--muted);
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .mode-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(255,107,53,0.08); }
+
+  .history-item {
+    background: var(--card2); border-radius: 10px; padding: 10px 12px;
+    margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .history-item:hover { border-color: var(--primary); background: rgba(255,107,53,0.08); }
+  .history-date { font-weight: 800; font-size: 0.85rem; }
+  .history-topic { color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+  .history-count { color: var(--accent); font-size: 0.75rem; font-weight: 700; }
+
+  .quiz-score-big { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--accent); text-align: center; margin: 10px 0; }
+  .quiz-nav-btn {
+    width: 100%; padding: 11px; border: none; border-radius: 10px;
+    background: var(--primary); color: white;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    cursor: pointer; font-size: 0.9rem; margin-top: 10px; display: none;
+  }
+
+  .info-box {
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .info-box a { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🦄 Pony English</h1>
+  <p>Trợ lý học Tiếng Anh thông minh</p>
+</div>
+
+<!-- API KEY SETUP -->
+<div class="api-setup" id="apiSetup">
+  <div class="card-title">🔑 Cài đặt API Key</div>
+  <p>Để dùng app offline, mẹ cần nhập Anthropic API Key. Lấy key tại <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">console.anthropic.com</a> → API Keys.</p>
+  <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+  <button class="btn btn-primary" onclick="saveApiKey()">💾 Lưu & Bắt đầu</button>
+</div>
+
+<div id="mainApp" style="display:none">
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('input')">📝 Nhập bài</button>
+  <button class="tab" onclick="switchTab('words')">📚 Từ vựng</button>
+  <button class="tab" onclick="switchTab('flashcard')">🃏 Flashcard</button>
+  <button class="tab" onclick="switchTab('fib')">✏️ Điền chữ</button>
+  <button class="tab" onclick="switchTab('quiz')">🎮 Đố vui</button>
+  <button class="tab" onclick="switchTab('history')">📅 Lịch sử</button>
+</div>
+
+<!-- INPUT PANEL -->
+<div id="panel-input" class="panel active">
+  <div class="card">
+    <div class="card-title">📅 Thông tin buổi học</div>
+    <input type="text" id="sessionDate" placeholder="Ngày học (vd: Thứ 2, 5/5/2026)">
+    <input type="text" id="sessionTopic" placeholder="Chủ đề bài học (vd: Animals, Family...)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">📖 Nội dung bài học</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modeText" onclick="setMode('text')">✍️ Gõ tay</button>
+      <button class="mode-btn" id="modeImg" onclick="setMode('image')">📷 Chụp ảnh</button>
+    </div>
+
+    <div id="textMode">
+      <textarea id="lessonText" placeholder="Nhập nội dung bài học, từ vựng, ngữ pháp...&#10;Ví dụ:&#10;Vocabulary: happy (vui), sad (buồn)&#10;Grammar: I am + adjective&#10;Sentences: I am happy today."></textarea>
+    </div>
+
+    <div id="imageMode" style="display:none">
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <div class="icon">📸</div>
+        <p>Chạm để chụp ảnh hoặc chọn từ thư viện</p>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)">
+      <img id="previewImg">
+    </div>
+
+    <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeLesson()">✨ Phân tích bài học</button>
+  </div>
+
+  <div id="loadingArea" style="display:none" class="loading">
+    <div class="spinner"></div>
+    <p>Claude đang phân tích bài học cho Pony...</p>
+  </div>
+</div>
+
+<!-- WORDS PANEL -->
+<div id="panel-words" class="panel">
+  <div id="words-content">
+    <div class="empty-state"><div class="big">📚</div><p>Chưa có từ vựng.<br>Nhập bài học ở tab "Nhập bài" trước nhé!</p></div>
+  </div>
+</div>
+
+<!-- FLASHCARD PANEL -->
+<div id="panel-flashcard" class="panel">
+  <div id="flashcard-content">
+    <div class="empty-state"><div class="big">🃏</div><p>Chưa có flashcard.<br>Nhập bài học để tạo flashcard nhé!</p></div>
+  </div>
+</div>
+
+<!-- FIB PANEL -->
+<div id="panel-fib" class="panel">
+  <div id="fib-content">
+    <div class="empty-state"><div class="big">✏️</div><p>Chưa có bài tập.<br>Nhập bài học để tạo bài tập nhé!</p></div>
+  </div>
+</div>
+
+<!-- QUIZ PANEL -->
+<div id="panel-quiz" class="panel">
+  <div id="quiz-content">
+    <div class="empty-state"><div class="big">🎮</div><p>Chưa có câu đố.<br>Nhập bài học để chơi nhé!</p></div>
+  </div>
+</div>
+
+<!-- HISTORY PANEL -->
+<div id="panel-history" class="panel">
+  <div class="card">
+    <div class="card-title">📅 Lịch sử buổi học</div>
+    <div id="history-list">
+      <div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào được lưu.</p></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end mainApp -->
+
+<script>
+  let apiKey = '';
+  let inputMode = 'text';
+  let uploadedImageB64 = null;
+  let lessonData = null;
+  let fcIndex = 0;
+  let fcFlipped = false;
+  let quizIndex = 0;
+  let quizScore = 0;
+  let quizAnswered = false;
+  let sessions = [];
+
+  // Init
+  window.onload = function() {
+    const saved = localStorage.getItem('pony_api_key');
+    if (saved) {
+      apiKey = saved;
+      document.getElementById('apiSetup').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+    }
+    const savedSessions = localStorage.getItem('pony_sessions');
+    if (savedSessions) sessions = JSON.parse(savedSessions);
+    renderHistory();
+
+    // Set today's date
+    const today = new Date();
+    const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+    document.getElementById('sessionDate').value = `${days[today.getDay()]}, ${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
+  };
+
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key.startsWith('sk-ant-')) {
+      alert('API Key không hợp lệ! Phải bắt đầu bằng sk-ant-');
+      return;
+    }
+    apiKey = key;
+    localStorage.setItem('pony_api_key', key);
+    document.getElementById('apiSetup').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+  }
+
+  function switchTab(tab) {
+    const tabs = ['input','words','flashcard','fib','quiz','history'];
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === tab));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-'+tab).classList.add('active');
+  }
+
+  function setMode(mode) {
+    inputMode = mode;
+    document.getElementById('modeText').classList.toggle('active', mode==='text');
+    document.getElementById('modeImg').classList.toggle('active', mode==='image');
+    document.getElementById('textMode').style.display = mode==='text' ? 'block' : 'none';
+    document.getElementById('imageMode').style.display = mode==='image' ? 'block' : 'none';
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      uploadedImageB64 = ev.target.result.split(',')[1];
+      const img = document.getElementById('previewImg');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function analyzeLesson() {
+    const date = document.getElementById('sessionDate').value || 'Hôm nay';
+    const topic = document.getElementById('sessionTopic').value || 'Tiếng Anh';
+    const text = document.getElementById('lessonText').value;
+
+    if (inputMode === 'text' && !text.trim()) { alert('Mẹ nhập nội dung bài học vào nhé!'); return; }
+    if (inputMode === 'image' && !uploadedImageB64) { alert('Mẹ chụp ảnh bài học vào nhé!'); return; }
+
+    document.getElementById('loadingArea').style.display = 'block';
+    document.getElementById('analyzeBtn').disabled = true;
+
+    try {
+      const systemPrompt = `Bạn là trợ lý giáo dục cho trẻ em 8 tuổi học tiếng Anh. Phân tích nội dung bài học và trả về JSON theo đúng format sau, không có text nào khác:
+{
+  "topic": "chủ đề bài học",
+  "grammar": "giải thích ngữ pháp ngắn gọn bằng tiếng Việt",
+  "words": [{"en":"từ tiếng Anh","vi":"nghĩa tiếng Việt","type":"n/v/adj","example":"câu ví dụ đơn giản"}],
+  "sentences": [{"text":"câu hoàn chỉnh tiếng Anh","blank_word":"từ cần điền","vi":"nghĩa tiếng Việt"}],
+  "quiz": [{"question":"câu hỏi","options":["A","B","C","D"],"correct":0}]
+}
+Tạo tối thiểu 6 từ vựng, 4 câu điền chỗ trống, 5 câu quiz. Phù hợp trẻ 8 tuổi.`;
+
+      let messages;
+      if (inputMode === 'image') {
+        messages = [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: uploadedImageB64 } },
+          { type: 'text', text: `Phân tích bài học tiếng Anh trong ảnh. Chủ đề: ${topic}` }
+        ]}];
+      } else {
+        messages = [{ role: 'user', content: `Phân tích bài học:\nChủ đề: ${topic}\n\n${text}` }];
+      }
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, system: systemPrompt, messages })
+      });
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+
+      const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+      lessonData = JSON.parse(raw);
+      lessonData.date = date;
+      lessonData.topic = topic || lessonData.topic;
+      lessonData.id = Date.now();
+
+      // Save to history
+      sessions.unshift({ id: lessonData.id, date, topic: lessonData.topic, wordCount: lessonData.words.length, data: lessonData });
+      if (sessions.length > 20) sessions.pop();
+      localStorage.setItem('pony_sessions', JSON.stringify(sessions));
+
+      renderAll();
+      switchTab('words');
+    } catch(e) {
+      alert('Có lỗi: ' + e.message + '\n\nKiểm tra lại API Key nhé mẹ!');
+    } finally {
+      document.getElementById('loadingArea').style.display = 'none';
+      document.getElementById('analyzeBtn').disabled = false;
+    }
+  }
+
+  function renderAll() {
+    renderWords();
+    renderFlashcard();
+    renderFIB();
+    renderQuiz();
+    renderHistory();
+  }
+
+  function renderWords() {
+    if (!lessonData) return;
+    const w = lessonData.words;
+    let html = `<div class="stats-row">
+      <div class="stat-box"><div class="stat-num">${w.length}</div><div class="stat-label">Từ mới</div></div>
+      <div class="stat-box"><div class="stat-num">${lessonData.sentences?.length||0}</div><div class="stat-label">Bài tập</div></div>
+      <div class="stat-box"><div class="stat-num">${lessonData.quiz?.length||0}</div><div class="stat-label">Câu đố</div></div>
+    </div>`;
+    if (lessonData.grammar) {
+      html += `<div class="card"><div class="card-title">📐 Ngữ pháp</div><p style="font-size:0.88rem;line-height:1.6;color:var(--secondary)">${lessonData.grammar}</p></div>`;
+    }
+    html += `<div class="card"><div class="card-title">📖 Từ vựng <span class="badge">${lessonData.date}</span></div><div class="word-list">`;
+    w.forEach(word => {
+      html += `<div class="word-item">
+        <div style="flex:1">
+          <div class="word-en">${word.en}</div>
+          <div class="word-vi">${word.vi}</div>
+          <div class="word-ex">${word.example||''}</div>
+        </div>
+        <span class="word-type">${word.type||'n'}</span>
+      </div>`;
+    });
+    html += '</div></div>';
+    document.getElementById('words-content').innerHTML = html;
+  }
+
+  function renderFlashcard() {
+    if (!lessonData) return;
+    fcIndex = 0; fcFlipped = false;
+    showFlashcard();
+  }
+
+  function showFlashcard() {
+    if (!lessonData?.words?.length) return;
+    const w = lessonData.words;
+    const word = w[fcIndex];
+    const total = w.length;
+    const pct = ((fcIndex+1)/total*100).toFixed(0);
+    document.getElementById('flashcard-content').innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="fc-counter">${fcIndex+1} / ${total} từ</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="theCard" onclick="flipCard()">
+          <div class="flashcard-front">
+            <div class="flashcard-word">${word.en}</div>
+            <div class="word-type" style="margin-top:8px">${word.type||'n'}</div>
+            <div class="flashcard-hint">👆 Chạm để xem nghĩa</div>
+          </div>
+          <div class="flashcard-back">
+            <div class="flashcard-meaning">${word.vi}</div>
+            <div class="flashcard-example">${word.example||''}</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-nav">
+        <button onclick="fcPrev()">← Trước</button>
+        <button onclick="flipCard()" style="background:var(--primary);color:white">🔄 Lật</button>
+        <button onclick="fcNext()">Tiếp →</button>
+      </div>
+      <button class="btn btn-secondary" onclick="shuffleCards()" style="margin-top:4px">🔀 Xáo bài ngẫu nhiên</button>`;
+  }
+
+  function flipCard() {
+    fcFlipped = !fcFlipped;
+    document.getElementById('theCard')?.classList.toggle('flipped', fcFlipped);
+  }
+  function fcNext() { if (!lessonData) return; fcIndex=(fcIndex+1)%lessonData.words.length; fcFlipped=false; showFlashcard(); }
+  function fcPrev() { if (!lessonData) return; fcIndex=(fcIndex-1+lessonData.words.length)%lessonData.words.length; fcFlipped=false; showFlashcard(); }
+  function shuffleCards() { if (!lessonData) return; lessonData.words.sort(()=>Math.random()-0.5); fcIndex=0; fcFlipped=false; showFlashcard(); }
+
+  function renderFIB() {
+    if (!lessonData?.sentences?.length) return;
+    let html = `<div class="card"><div class="card-title">✏️ Điền từ vào chỗ trống</div>`;
+    lessonData.sentences.forEach((s, i) => {
+      const blanked = s.text.replace(new RegExp(s.blank_word, 'i'), '_______');
+      html += `<div class="fib-question">
+        <div class="fib-sentence">${i+1}. ${blanked}</div>
+        <div class="fib-vi">${s.vi}</div>
+        <div class="fib-row">
+          <input type="text" class="fib-input" id="fib-${i}" placeholder="Điền vào...">
+          <button class="fib-check" onclick="checkFIB(${i},'${s.blank_word}')">Kiểm tra ✓</button>
+        </div>
+        <div class="fib-result" id="fib-result-${i}"></div>
+      </div>`;
+    });
+    html += '</div>';
+    document.getElementById('fib-content').innerHTML = html;
+  }
+
+  function checkFIB(i, answer) {
+    const input = document.getElementById('fib-'+i);
+    const result = document.getElementById('fib-result-'+i);
+    const val = input.value.trim().toLowerCase();
+    if (val === answer.toLowerCase()) {
+      result.className='fib-result correct'; result.textContent='✅ Đúng rồi! Pony giỏi lắm!';
+      input.style.borderColor='var(--success)';
+    } else {
+      result.className='fib-result wrong'; result.textContent=`❌ Chưa đúng! Đáp án: "${answer}"`;
+      input.style.borderColor='var(--danger)';
+    }
+  }
+
+  function renderQuiz() {
+    if (!lessonData?.quiz?.length) return;
+    quizIndex=0; quizScore=0; quizAnswered=false;
+    showQuiz();
+  }
+
+  function showQuiz() {
+    if (!lessonData?.quiz) return;
+    const quiz = lessonData.quiz;
+    if (quizIndex >= quiz.length) {
+      const pct = Math.round(quizScore/quiz.length*100);
+      const emoji = pct>=80?'🏆':pct>=60?'⭐':'💪';
+      document.getElementById('quiz-content').innerHTML = `
+        <div class="card" style="text-align:center;padding:30px">
+          <div style="font-size:3rem;margin-bottom:12px">${emoji}</div>
+          <div class="quiz-score-big">${quizScore}/${quiz.length}</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--secondary);margin-bottom:12px">${pct}%</div>
+          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">${pct>=80?'Pony xuất sắc! 🎉':pct>=60?'Pony học tốt, cố lên!':'Ôn lại flashcard rồi thử lại nhé!'}</p>
+          <button class="btn btn-primary" onclick="renderQuiz()">🔄 Chơi lại</button>
+        </div>`;
+      return;
+    }
+    const q = quiz[quizIndex];
+    const pct = (quizIndex/quiz.length*100).toFixed(0);
+    let optHtml = q.options.map((opt,i) => `<button class="quiz-opt" id="qopt-${i}" onclick="answerQuiz(${i},${q.correct})">${opt}</button>`).join('');
+    document.getElementById('quiz-content').innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="color:var(--muted);font-size:0.78rem">Câu ${quizIndex+1}/${quiz.length}</span>
+        <span style="color:var(--accent);font-weight:800;font-size:0.85rem">⭐ ${quizScore} điểm</span>
+      </div>
+      <div class="card">
+        <div class="quiz-question">${q.question}</div>
+        <div class="quiz-options">${optHtml}</div>
+        <div id="quiz-feedback" style="margin-top:10px;font-weight:700;font-size:0.82rem"></div>
+        <button class="quiz-nav-btn" id="nextBtn" onclick="nextQuiz()">Câu tiếp theo →</button>
+      </div>`;
+    quizAnswered = false;
+  }
+
+  function answerQuiz(chosen, correct) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    document.querySelectorAll('.quiz-opt').forEach(b => b.disabled=true);
+    const fb = document.getElementById('quiz-feedback');
+    if (chosen===correct) {
+      quizScore++;
+      document.getElementById('qopt-'+chosen).classList.add('correct-opt');
+      fb.innerHTML='<span style="color:var(--success)">✅ Đúng rồi! Pony thông minh!</span>';
+    } else {
+      document.getElementById('qopt-'+chosen).classList.add('wrong-opt');
+      document.getElementById('qopt-'+correct).classList.add('correct-opt');
+      fb.innerHTML='<span style="color:var(--danger)">❌ Chưa đúng! Xem lại nhé!</span>';
+    }
+    const nb = document.getElementById('nextBtn');
+    if (nb) nb.style.display='block';
+  }
+
+  function nextQuiz() { quizIndex++; showQuiz(); }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+    if (!sessions.length) {
+      list.innerHTML='<div class="empty-state"><div class="big">📅</div><p>Chưa có buổi học nào.</p></div>';
+      return;
+    }
+    list.innerHTML = sessions.map((s,i) => `
+      <div class="history-item" onclick="loadSession(${i})">
+        <div>
+          <div class="history-date">${s.date}</div>
+          <div class="history-topic">📚 ${s.topic}</div>
+        </div>
+        <div class="history-count">${s.wordCount} từ</div>
+      </div>`).join('');
+  }
+
+  function loadSession(i) {
+    lessonData = sessions[i].data;
+    renderAll();
+    switchTab('words');
+  }
+</script>
+</body>
+</html>
